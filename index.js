@@ -1,8 +1,25 @@
 const express = require('express')
+const morgan = require('morgan')
 
 const app = express()
 
 app.use(express.json())
+app.use(morgan((tokens, req, res) => {
+    console.log(tokens.method(req, res))
+    const print = [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms'
+    ]
+
+    if (tokens.method(req, res) === 'POST') {
+        print.push(JSON.stringify(req.body))
+    }
+
+    return print.join(' ')
+}))
 
 let persons = [
     {
@@ -68,11 +85,10 @@ app.post('/api/persons', (request, response) => {
     } else if (!person.number) {
         return response.status(400)
             .json({error: 'phone is missing'})
-    } else if (persons.filter(p => p.name === person.name)) {
+    } else if (persons.find(p => p.name === person.name)) {
         return response.status(400)
             .json({error: 'name must be unique'})
     }
-
     persons = persons.concat(person)
 
     response.status(201)
