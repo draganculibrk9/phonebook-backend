@@ -22,6 +22,7 @@ app.use(morgan((tokens, req, res) => {
 
     return print.join(' ')
 }))
+app.use(express.static('build'))
 
 let persons = [
     {
