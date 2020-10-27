@@ -7,7 +7,6 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(morgan((tokens, req, res) => {
-    console.log(tokens.method(req, res))
     const print = [
         tokens.method(req, res),
         tokens.url(req, res),
@@ -61,7 +60,7 @@ app.get('/info', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
 
-    const person = persons.find(person => person.id === id)
+    const person = persons.find(p => p.id === id)
 
     if (person) {
         response.json(person)
@@ -75,8 +74,22 @@ app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
 
     persons = persons.filter(person => person.id !== id)
+    response.sendStatus(200)
+})
 
-    response.status(204)
+app.put('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+
+    let person = persons.find(p => p.id === id)
+
+    if (person) {
+        person = {...request.body}
+        persons = persons.filter(p => p.id !== id).concat(person)
+        return response.json(person)
+    } else {
+        return response.status(404)
+            .send(`Person with id '${id}' not found`)
+    }
 })
 
 app.post('/api/persons', (request, response) => {
