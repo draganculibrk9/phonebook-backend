@@ -6,7 +6,8 @@
   "scripts": {
     "test": "test",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^7.12.1",
     "nodemon": "^2.0.6"
   }
 }
